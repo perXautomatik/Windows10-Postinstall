@@ -1,53 +1,144 @@
-#  Windows10-Postinstall
+# Debloat Windows 10
 
-This repo contains a set of scripts & tools that I use to prepare my new Windows 10 installations. It improves performance, privacy, and makes the system cleaner overall.
+This project collects PowerShell scripts which help to *debloat* Windows 10,
+tweak common settings and install basic software components.
 
-**main branch: Removes Cortana, Xbox services, OneDrive, Windows Defender, useless apps, and services.**
+I test these scripts on a Windows 10 Professional 64-Bit (English) virtual
+machine. Please let me know if you encounter any issues. Home Edition and
+different languages are not supported. These scripts are intended for
+tech-savvy administrators, who know what they are doing and just want to
+automate this phase of their setup. If this profile does not fit you, I
+recommend using a different (more interactive) tool -- and there are a lot of
+them out there.
 
-**Important:** I tried to include references and credits in my scripts as much as possible. I recommend you to read the explanations about the scripts & tools below, before running them, as it can cause unwanted effects on your system.
-I am not responsible for any damage caused to your system.
+Also, note that gaming-related apps and services will be removed/disabled. If
+you intend to use your system for gaming, adjust the scripts accordingly.
 
+**There is no undo**, I recommend only using these scripts on a fresh
+installation (including Windows Updates). Test everything after running them
+before doing anything else. Also, there is no guarantee that everything will
+work after future updates since I cannot predict what Microsoft will do next.
 
+## Interactivity
 
-## Scripts:
+The scripts are designed to run without any user interaction. Modify them
+beforehand. If you want a more interactive approach check out
+[DisableWinTracking](https://github.com/10se1ucgo/DisableWinTracking) from
+[10se1ucgo](https://github.com/10se1ucgo).
 
-|Script|Description|
-|--|--|
-|contentDeliveryManager.ps1|This script completely prevents Windows 10 from automatically installing unwanted sponsored apps & games. <br>For reference: [https://blog.drhack.net/disable-windows-10-app-install-without-consent/](https://blog.drhack.net/disable-windows-10-app-install-without-consent/)|
-|fsutil.ps1|This script applies various tweaks for the NTFS filesystem using the fsutil command. <br>For reference: [https://notes.ponderworthy.com/fsutil-tweaks-for-ntfs-performance-and-reliability](https://notes.ponderworthy.com/fsutil-tweaks-for-ntfs-performance-and-reliability)|
-|registryTweaks.ps1|This script contains various tweaks that apply to Windows's registry. The tweaks are the following: <br><br>-   Set system clock to UTC, to prevent clock desyncs when multi-booting other systems such as Linux and macOS. This tweak does not cause any issue in the case of single-booting. <br><br>- Disable full-screen optimizations in games. This tweak allows games to use exclusive full-screen mode, thus can improve gaming performance and decrease latency. <br><br>-   Prevent Malware Removal Tool from automatically installing via Windows Update. That can be unsafe, but we are not using Windows Defender anyway. Only use if you are sure you do not need an antivirus. <br><br>-   Disable NetBIOS over TCP/IP. This service is legacy, vulnerable, and shouldn't be used anymore. Do not use if your computer belongs to your organization, and you are not sure. For reference: [https://geekflare.com/netbios-disable-windows/](https://geekflare.com/netbios-disable-windows/) <br><br>-   Disable web search in Windows Search.|
-|removeApps.ps1|This script uninstalls "useless" UWP apps for the current user, to make the system as minimal as possible. Please make sure this script does not uninstall any app that you need before running it. <br>Note: Most apps can be manually reinstalled from the Microsoft Store.
-|removeOneDrive.ps1|This script completely removes OneDrive features from Windows. Do not run if you use OneDrive. <br>Credits: [https://github.com/Sycnex/Windows10Debloater](https://github.com/Sycnex/Windows10Debloater)
-|scheduledTasks.ps1|This script disables some default scheduled tasks, mostly tasks used for telemetry and data collection. Improves privacy.
-|services.ps1|This script disables "useless" Windows services. Services disabled are the following:<br><br>-   Windows Error Reporting<br>-   OneDrive sync Service<br>-   Program Compatibility Assistant (does not disable compatibility features, only the assistant.)<br>-   Messaging Services<br>-   Retail Demo<br>-   Diagnostics Hub Data Collector<br>-   Geolocation Services<br>-   AllJoyn Router Services<br>-   Remote Registry<br>-   Data Usage Monitor Service<br>-   Diagnostics Tracking Service<br>-   Downloaded Maps Manager<br><br> This script also disables all Xbox-related services.
-|ultimatePerformancePlan.ps1|This script enables the hidden "ultimate" performance plan. Enabling that can improve performance significantly. For reference: [https://www.howtogeek.com/368781/how-to-enable-ultimate-performance-power-plan-in-windows-10/](https://www.howtogeek.com/368781/how-to-enable-ultimate-performance-power-plan-in-windows-10/)
-|GameBarPresenceWriter|Removes a leftover Xbox Game Bar related program that appears whenever a game is running, and shouldn't be there. Reduces overhead. <br>For reference: [https://www.reddit.com/r/DestinyTechSupport/comments/amq3g1/i_think_i_found_the_root_cause_of_the_stuttering/](https://www.reddit.com/r/DestinyTechSupport/comments/amq3g1/i_think_i_found_the_root_cause_of_the_stuttering/)
+## Download Latest Version
 
-## LGPO:
-LGPO is a tool that can import/export the local [group policy](https://en.wikipedia.org/wiki/Group_Policy) of Windows. I included my group policy in this repo as well. Here is a non-exhaustive list of the settings enforced in my group policy:
+Code located in the `master` branch is always considered under development, but
+you'll probably want the most recent version anyway.
 
--   Disable Windows Update auto-updates.
--   Disable Windows Update automatic driver installation (I prefer installing drivers from the respective manufacturers' websites).
--   Disable Windows Defender. That significantly improves performance and reduces overhead, but can reduce security, if you are not careful enough.
--   Disable Geolocation Services.
--   Limit telemetry to the minimum level.
--   Disable Windows Spotlight on the lock screen.
+- [Download [zip]](https://github.com/W4RH4WK/Debloat-Windows-10/archive/master.zip)
 
-Be aware my group policy can contain personal preferences that you may not want.
+## Execution
 
-While I strongly advise you to build your group policy yourself, you can use mine by importing it using the LGPO tool.
+Enable execution of PowerShell scripts:
 
-Run the following command in an elevated command prompt or PowerShell Window, with your current directory set to LGPO:
+    PS> Set-ExecutionPolicy Unrestricted -Scope CurrentUser
 
-    LGPO.exe /g policy
+Unblock PowerShell scripts and modules within this directory:
 
-## Tools:
-|Tool|Description|
-|--|--|
-|Autoruns|[Autoruns](https://docs.microsoft.com/en-us/sysinternals/downloads/autoruns) is a useful tool from Windows [Sysinternals](https://docs.microsoft.com/en-us/sysinternals/) that helps manage and remove programs, services, scheduled tasks, system extensions, and more that automatically run at startup.|
-|cru-1.4.1|[Custom Resolution Utility](https://www.monitortests.com/forum/Thread-Custom-Resolution-Utility-CRU) is a tool used to create and manage custom monitor resolutions. You probably do not need this tool, but I have included it for personal reasons.|
-|MSI_util_v2|This tool is used to enable message-signaled interrupts for internal devices. That can improve performance and decrease latency. Can cause issues with older devices, use with caution. <br>For reference: [https://forums.guru3d.com/threads/windows-line-based-vs-message-signaled-based-interrupts-msi-tool.378044/](https://forums.guru3d.com/threads/windows-line-based-vs-message-signaled-based-interrupts-msi-tool.378044/)<br>[https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/introduction-to-message-signaled-interrupts](https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/introduction-to-message-signaled-interrupts)|
-|Winaero Tweaker|[Winaero Tweaker](https://winaero.com/winaero-tweaker/) is a tool from [Winaero](https://winaero.com/) that exposes hidden Windows settings and registry tweaks with a nice-looking user interface. There are many options to explore there. Use this tool at your convenience.|
-|InSpectre|[InSpectre](https://www.grc.com/inspectre.htm) is a tool from [Gibson Research Corporation](https://www.grc.com/intro.htm). This tool can enable/disable [Meltdown and Spectre](https://meltdownattack.com/) mitigations. It also determines the performance hit by the mitigations. <br>Disabling mitigations can improve performance but is discouraged due to security implications.|
+    PS> ls -Recurse *.ps*1 | Unblock-File
 
-## Please report any issues you find in my scripts. I am also very open to contributions. Thanks!
+## Usage
+
+Scripts can be run individually, pick what you need.
+
+1. Install all available updates for your system.
+2. Edit the scripts to fit your need.
+3. Run the scripts you want to apply from a PowerShell with administrator privileges (Explorer
+   `Files > Open Windows PowerShell > Open Windows PowerShell as
+   administrator`)
+4. `PS > Restart-Computer`
+5. Run `disable-windows-defender.ps1` one more time if you ran it in step 3
+6. `PS > Restart-Computer`
+
+## Start menu
+
+In the past I included small fixes to make the start menu more usable, like
+removing default tiles, disabling web search and so on. This is no longer the
+case since I am fed up with it. This fucking menu breaks for apparently
+no reason, is slow, is a pain to configure / script and even shows ads out of
+the box!
+
+Please replace it with something better, either use [Open Shell] or [Start
+is Back], but stop using that shit.
+
+[Open Shell]: <https://open-shell.github.io/Open-Shell-Menu/>
+[Start is Back]: <http://startisback.com/>
+
+## Known Issues
+
+### Start menu Search
+
+After running the scripts, the start menu search-box may no longer work on newly
+created accounts. It seems like there is an issue with account initialization
+that is triggered when disabling the GeoLocation service. Following workaround
+has been discovered by BK from Atlanta:
+
+1. Delete registry key `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\lfsvc\TriggerInfo\3`
+2. Re-enable GeoLocation service (set startup type to `Automatic`)
+3. Reboot
+4. Login with the account having the stated issue
+5. Start Cortana and set your preferences accordingly (web search and whatnot)
+
+You may now disable the GeoLocation service again, the search box should remain
+functional.
+
+### Sysprep will hang
+
+If you are deploying images with MDT and running these scripts, the sysprep
+step will hang unless `dmwappushservice` is active.
+
+### Xbox Wireless Adapter
+
+Apparently running the stock `remove-default-apps` script will cause Xbox
+Wireless Adapters to stop functioning. I suspect one should not remove the Xbox
+App when wanting to use one. But I haven't confirmed this yet, and there is a
+workaround to re-enable it afterwards. See
+[#78](https://github.com/W4RH4WK/Debloat-Windows-10/issues/78).
+
+### Issues with Skype
+
+Some of the domains blocked by adding them to the hosts-file are required for
+Skype. I highly discourage using Skype, however some people may not have
+the option to use an alternative. See the
+[#79](https://github.com/W4RH4WK/Debloat-Windows-10/issues/79).
+
+### Fingerprint Reader / Facial Detection not Working
+
+Ensure *Windows Biometric Service* is running. See
+[#189](https://github.com/W4RH4WK/Debloat-Windows-10/issues/189).
+
+## Liability
+
+**All scripts are provided as-is and you use them at your own risk.**
+
+## Contribute
+
+I would be happy to extend the collection of scripts. Just open an issue or
+send me a pull request.
+
+### Thanks To
+
+- [10se1ucgo](https://github.com/10se1ucgo)
+- [Plumebit](https://github.com/Plumebit)
+- [aramboi](https://github.com/aramboi)
+- [maci0](https://github.com/maci0)
+- [narutards](https://github.com/narutards)
+- [tumpio](https://github.com/tumpio)
+
+## License
+
+    "THE BEER-WARE LICENSE" (Revision 42):
+
+    As long as you retain this notice you can do whatever you want with this
+    stuff. If we meet someday, and you think this stuff is worth it, you can
+    buy us a beer in return.
+
+    This project is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.
